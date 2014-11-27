@@ -12,6 +12,8 @@ var Link = require('./app/models/link');
 var Click = require('./app/models/click');
 
 var app = express();
+app.use(express.cookieParser('shhhh, very secret'));
+app.use(express.session());
 
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
@@ -22,6 +24,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static(__dirname + '/public'));
 
+app.get('/login', function(req, res) {
+  res.render('login')
+});
+
+app.get('/signup', function(req, res) {
+  res.render('signup');
+});
 
 app.get('/',
 function(req, res) {
@@ -65,9 +74,10 @@ function(req, res) {
           title: title,
           base_url: req.headers.origin
         });
-        console.log(link)
+
 
         link.save().then(function(newLink) {
+          console.log(newLink)
           Links.add(newLink);
           res.send(200, newLink);
         });
